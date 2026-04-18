@@ -1,4 +1,5 @@
 const STORAGE_KEY = "fesTimeBuilder_board_v8_mobile_timeedit_stageorder";
+const APP_NAME = "妄想タイムテーブル";
 
 const DEFAULT_STAGE_ORDER = {
   summerSonic: ["Marine", "Beach", "Mountain", "Sonic", "Spotify Early Noise", "Pacific"]
@@ -60,7 +61,10 @@ const state = {
   assignments: {},
   stageOrders: {},
   slotOverrides: {},
-  draggingStage: ""
+  draggingStage: "",
+  dragHoverStage: "",
+  dragCommitted: false,
+  dragStartOrder: null
 };
 
 const touchDrag = {
@@ -612,6 +616,25 @@ function reorderStage(sourceStage, targetStage) {
   return true;
 }
 
+function applyStageOrderToBoard() {
+  const laneGrid = el.board.querySelector(".stageTimelineGrid");
+  if (!laneGrid) return;
+
+  const laneNodes = Array.from(laneGrid.querySelectorAll(".stageLane[data-stage]"));
+  const stageNodeMap = new Map(laneNodes.map((node) => [node.dataset.stage, node]));
+  getOrderedStages().forEach((stage) => {
+    const node = stageNodeMap.get(stage);
+    if (node) laneGrid.append(node);
+  });
+}
+
+function previewStageReorder(sourceStage, targetStage) {
+  const changed = reorderStage(sourceStage, targetStage);
+  if (!changed) return false;
+  applyStageOrderToBoard();
+  return true;
+}
+
 function handleStageTouchMove(event) {
   const active = touchDrag.stage;
   if (!active || active.pointerId !== event.pointerId) return;
@@ -623,6 +646,19 @@ function handleStageTouchMove(event) {
   if (target?.node) {
     target.node.classList.add("dropActive");
   }
+
+  if (
+    target?.stage
+    && target.stage !== active.sourceStage
+    && target.stage !== active.lastPreviewStage
+  ) {
+    const changed = previewStageReorder(active.sourceStage, target.stage);
+    if (changed) {
+      active.changed = true;
+      active.lastPreviewStage = target.stage;
+    }
+  }
+
   active.target = target;
   event.preventDefault();
 }
@@ -632,15 +668,22 @@ function finishStageTouchDrag(event) {
   if (!active || active.pointerId !== event.pointerId) return;
 
   const target = active.target || pickStageDropTarget(event.clientX, event.clientY);
-  const changed = target?.stage ? reorderStage(active.sourceStage, target.stage) : false;
+  let changed = active.changed;
+  if (!changed && target?.stage) {
+    changed = previewStageReorder(active.sourceStage, target.stage);
+    if (changed) {
+      active.lastPreviewStage = target.stage;
+    }
+  }
 
   active.ghost?.remove();
   clearDropHighlights();
   touchDrag.stage = null;
 
   if (changed) {
-    setMessage(`ステージ順を変更: ${active.sourceStage} → ${target.stage}`);
-    renderAll();
+    saveStateSilently();
+    renderSummary();
+    setMessage(`ステージ順を変更: ${active.sourceStage} → ${active.lastPreviewStage || target.stage}`);
   }
 
   event.preventDefault();
@@ -649,6 +692,11 @@ function finishStageTouchDrag(event) {
 function cancelStageTouchDrag(event) {
   const active = touchDrag.stage;
   if (!active || active.pointerId !== event.pointerId) return;
+  if (active.changed && Array.isArray(active.originOrder)) {
+    state.stageOrders[getStageOrderKey()] = [...active.originOrder];
+    applyStageOrderToBoard();
+    renderSummary();
+  }
   active.ghost?.remove();
   clearDropHighlights();
   touchDrag.stage = null;
@@ -661,6 +709,9 @@ function attachStageReorderEvents(stageCol, stageName, targetStage) {
 
   stageName.addEventListener("dragstart", (event) => {
     state.draggingStage = targetStage;
+    state.dragHoverStage = "";
+    state.dragCommitted = false;
+    state.dragStartOrder = [...getOrderedStages()];
     event.dataTransfer.setData("application/x-fes-stage", targetStage);
     event.dataTransfer.setData("text/plain", `__stage__:${targetStage}`);
     event.dataTransfer.effectAllowed = "move";
@@ -668,7 +719,15 @@ function attachStageReorderEvents(stageCol, stageName, targetStage) {
   });
 
   stageName.addEventListener("dragend", () => {
+    if (!state.dragCommitted && Array.isArray(state.dragStartOrder) && state.dragHoverStage) {
+      state.stageOrders[getStageOrderKey()] = [...state.dragStartOrder];
+      applyStageOrderToBoard();
+      renderSummary();
+    }
     state.draggingStage = "";
+    state.dragHoverStage = "";
+    state.dragCommitted = false;
+    state.dragStartOrder = null;
     stageCol.classList.remove("draggingStage");
     clearDropHighlights();
   });
@@ -679,6 +738,17 @@ function attachStageReorderEvents(stageCol, stageName, targetStage) {
     event.preventDefault();
     stageCol.classList.add("dropActive");
     event.dataTransfer.dropEffect = "move";
+
+    if (
+      state.draggingStage
+      && targetStage !== state.draggingStage
+      && targetStage !== state.dragHoverStage
+    ) {
+      const changed = previewStageReorder(state.draggingStage, targetStage);
+      if (changed) {
+        state.dragHoverStage = targetStage;
+      }
+    }
   };
 
   stageCol.addEventListener("dragover", onStageDragOver);
@@ -700,9 +770,19 @@ function attachStageReorderEvents(stageCol, stageName, targetStage) {
 
     event.preventDefault();
     stageCol.classList.remove("dropActive");
-    if (reorderStage(sourceStage, targetStage)) {
-      renderAll();
-      setMessage(`ステージ順を変更: ${sourceStage} → ${targetStage}`);
+    let changed = false;
+    let destination = targetStage;
+    if (state.dragHoverStage) {
+      changed = true;
+      destination = state.dragHoverStage;
+    } else if (sourceStage !== targetStage) {
+      changed = previewStageReorder(sourceStage, targetStage);
+    }
+    if (changed) {
+      state.dragCommitted = true;
+      saveStateSilently();
+      renderSummary();
+      setMessage(`ステージ順を変更: ${sourceStage} → ${destination}`);
     }
   };
 
@@ -716,6 +796,9 @@ function attachStageReorderEvents(stageCol, stageName, targetStage) {
     touchDrag.stage = {
       pointerId: event.pointerId,
       sourceStage: targetStage,
+      originOrder: [...getOrderedStages()],
+      changed: false,
+      lastPreviewStage: "",
       target: null,
       ...ghostInfo
     };
@@ -773,7 +856,7 @@ function attachSlotTimeDragEvents(slotNode, slot, timeline, pxPerMinute, timeBut
       setMessage(`時間変更: ${start} - ${end}`);
       renderAll();
     } else {
-      timeButton.textContent = `${slot.start} - ${slot.end}`;
+      timeButton.textContent = slot.start;
       slotNode.style.top = `${(slot._startN - timeline.minMinute) * pxPerMinute}px`;
     }
 
@@ -823,7 +906,7 @@ function attachSlotTimeDragEvents(slotNode, slot, timeline, pxPerMinute, timeBut
     drag.changed = drag.changed || nextStart !== drag.baseStart;
 
     slotNode.style.top = `${(nextStart - timeline.minMinute) * pxPerMinute}px`;
-    timeButton.textContent = `${formatClock(nextStart)} - ${formatClock(nextEnd)}`;
+    timeButton.textContent = formatClock(nextStart);
 
     event.preventDefault();
   });
@@ -861,8 +944,12 @@ function renderBoard() {
   const daySlots = getDaySlotsWithOverrides(state.dayFilter);
   const timeline = buildTimelineData(daySlots);
   const spanMinutes = Math.max(60, timeline.maxMinute - timeline.minMinute);
-  const pxPerMinute = window.innerWidth <= 640 ? 1.15 : 1.35;
+  const pxPerMinute = window.innerWidth <= 640 ? 1.1 : 1.25;
   const bodyHeight = Math.ceil(spanMinutes * pxPerMinute);
+  const ticks = [];
+  for (let m = timeline.minMinute; m <= timeline.maxMinute; m += 60) {
+    ticks.push(m);
+  }
 
   const dayLabel = document.createElement("p");
   dayLabel.className = "dayBanner";
@@ -872,16 +959,23 @@ function renderBoard() {
   const timelineShell = document.createElement("div");
   timelineShell.className = "timelineShell";
 
-  const timeAxis = document.createElement("div");
-  timeAxis.className = "timeAxis";
-  timeAxis.style.height = `${bodyHeight}px`;
-  for (let m = timeline.minMinute; m <= timeline.maxMinute; m += 60) {
-    const tick = document.createElement("div");
-    tick.className = "timeTick";
-    tick.style.top = `${(m - timeline.minMinute) * pxPerMinute}px`;
-    tick.textContent = formatClock(m);
-    timeAxis.append(tick);
-  }
+  const makeAxis = (right = false) => {
+    const timeAxis = document.createElement("div");
+    timeAxis.className = "timeAxis";
+    if (right) timeAxis.classList.add("isRight");
+    timeAxis.style.height = `${bodyHeight}px`;
+    ticks.forEach((m) => {
+      const tick = document.createElement("div");
+      tick.className = "timeTick";
+      tick.style.top = `${(m - timeline.minMinute) * pxPerMinute}px`;
+      tick.textContent = formatClock(m);
+      timeAxis.append(tick);
+    });
+    return timeAxis;
+  };
+
+  const leftAxis = makeAxis(false);
+  const rightAxis = makeAxis(true);
 
   const laneGrid = document.createElement("div");
   laneGrid.className = "stageTimelineGrid";
@@ -891,17 +985,41 @@ function renderBoard() {
 
   orderedStages.forEach((stage, stageIndex) => {
     const stageColor = getStageColor(stage, stageIndex);
+    const meta = getStageMeta(stage);
     const stageCol = document.createElement("section");
     stageCol.className = "stageLane";
 
+    const stageHead = document.createElement("header");
+    stageHead.className = "stageLaneHead";
+
+    const stageDot = document.createElement("span");
+    stageDot.className = "stageLaneDot";
+    stageDot.style.borderColor = stageColor;
+
+    const stageNameWrap = document.createElement("div");
+    stageNameWrap.className = "stageLaneNameWrap";
     const stageName = document.createElement("h3");
     stageName.className = "stageLaneName";
-    stageName.textContent = stage;
-    stageName.style.background = stageColor;
-    if (stageColor.toLowerCase() === "#f1f3f5") {
-      stageName.style.color = "#1f2328";
+    stageName.textContent = meta.title;
+    stageNameWrap.append(stageName);
+
+    if (meta.subtitle) {
+      const stageSubtitle = document.createElement("p");
+      stageSubtitle.className = "stageLaneSubtitle";
+      stageSubtitle.textContent = meta.subtitle;
+      stageNameWrap.append(stageSubtitle);
     }
-    attachStageReorderEvents(stageCol, stageName, stage);
+
+    const stageVenue = document.createElement("p");
+    stageVenue.className = "stageLaneVenue";
+    stageVenue.textContent = meta.venue || "";
+
+    const stageAccent = document.createElement("div");
+    stageAccent.className = "stageLaneAccent";
+    stageAccent.style.background = stageColor;
+
+    stageHead.append(stageDot, stageNameWrap, stageVenue, stageAccent);
+    attachStageReorderEvents(stageCol, stageHead, stage);
 
     const laneBody = document.createElement("div");
     laneBody.className = "stageLaneBody";
@@ -913,19 +1031,22 @@ function renderBoard() {
 
     stageSlots.forEach((slot) => {
       const id = slot._slotId || slotId(slot);
+      const assigned = state.assignments[id];
+      const hasArtist = Boolean(assigned);
       const slotNode = document.createElement("div");
       slotNode.className = "slot";
       slotNode.dataset.slotId = id;
       slotNode.style.top = `${(slot._startN - timeline.minMinute) * pxPerMinute}px`;
       slotNode.style.height = `${Math.max(38, (slot._endN - slot._startN) * pxPerMinute)}px`;
-      slotNode.style.borderColor = toRgba(stageColor, 0.65);
-      slotNode.style.background = `linear-gradient(180deg, ${toRgba(stageColor, 0.3)}, ${toRgba(stageColor, 0.18)})`;
+      slotNode.style.borderColor = hasArtist ? toRgba(stageColor, 0.72) : "#d9dee6";
+      slotNode.style.background = hasArtist ? toRgba(stageColor, 0.9) : "#f3f5f8";
 
       const time = document.createElement("button");
       time.type = "button";
       time.className = "slotTime slotTimeButton";
-      time.textContent = `${slot.start} - ${slot.end}`;
+      time.textContent = slot.start;
       time.title = "タップで時刻入力 / 枠を上下ドラッグで時刻移動";
+      time.style.color = hasArtist ? "#1c1f22" : "#7a828e";
       time.addEventListener("click", (event) => {
         event.stopPropagation();
         promptSlotTime(slot);
@@ -934,8 +1055,8 @@ function renderBoard() {
       const body = document.createElement("div");
       body.className = "slotBody";
 
-      if (state.assignments[id]) {
-        const tag = makeTag(state.assignments[id], id);
+      if (assigned) {
+        const tag = makeTag(assigned, id);
         body.append(tag);
       }
 
@@ -945,11 +1066,11 @@ function renderBoard() {
       laneBody.append(slotNode);
     });
 
-    stageCol.append(stageName, laneBody);
+    stageCol.append(stageHead, laneBody);
     laneGrid.append(stageCol);
   });
 
-  timelineShell.append(timeAxis, laneGrid);
+  timelineShell.append(leftAxis, laneGrid, rightAxis);
   el.board.append(timelineShell);
 }
 
@@ -957,7 +1078,7 @@ function renderSummary() {
   const total = getYearData().slots.length;
   const placed = Object.keys(state.assignments).length;
   el.summary.textContent = `配置 ${placed}/${total} ・ 未配置 ${state.pool.length}`;
-  el.boardTitle.textContent = `TIMETABLE BOARD ${state.yearKey}`;
+  el.boardTitle.textContent = `${APP_NAME} ${state.yearKey}`;
   updatePosterLink();
 }
 
@@ -1272,11 +1393,6 @@ function exportBoardImage() {
   ctx.textAlign = "left";
   for (let m = timeline.minMinute; m <= timeline.maxMinute; m += 60) {
     const y = bodyTop + (m - timeline.minMinute) * pxPerMinute;
-    ctx.strokeStyle = "#e1e6ed";
-    ctx.beginPath();
-    ctx.moveTo(gridX, y);
-    ctx.lineTo(gridX + gridW, y);
-    ctx.stroke();
     ctx.fillText(formatClock(m), leftAxisX, y + 3);
     ctx.fillText(formatClock(m), rightAxisX, y + 3);
   }
@@ -1316,6 +1432,7 @@ function attachEvents() {
 
 async function init() {
   try {
+    document.title = APP_NAME;
     await loadFestivals();
     fillFestivalOptions();
     fillYearOptions();

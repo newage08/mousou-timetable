@@ -171,12 +171,13 @@ textarea {
 }
 
 .artistTag.inSlot {
-  background: #fff;
-  color: var(--ink);
-  border-color: #9d9487;
-  border-radius: 6px;
-  padding: 1px 6px;
-  font-size: 0.74rem;
+  background: transparent;
+  color: #101316;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: 0.87rem;
+  font-weight: 700;
   line-height: 1.25;
   width: 100%;
   max-width: 100%;
@@ -241,53 +242,113 @@ textarea {
 
 .timelineShell {
   display: grid;
-  grid-template-columns: 76px 1fr;
-  gap: 10px;
+  grid-template-columns: 56px 1fr 56px;
+  gap: 0;
   min-width: 900px;
 }
 
 .timeAxis {
   position: relative;
-  border-right: 1px solid var(--line);
+  border-right: 1px solid #d4d9df;
+  background: #f8f9fb;
+}
+
+.timeAxis.isRight {
+  border-right: 0;
+  border-left: 1px solid #d4d9df;
 }
 
 .timeTick {
   position: absolute;
-  left: 0;
+  left: 4px;
   width: 100%;
   transform: translateY(-50%);
-  font-size: 0.75rem;
-  color: var(--muted);
-  border-top: 1px dashed #dbcfb9;
-  padding-top: 2px;
+  font-size: 0.7rem;
+  color: #6d7682;
+  padding-top: 0;
+}
+
+.timeAxis.isRight .timeTick {
+  left: 8px;
 }
 
 .stageTimelineGrid {
   display: grid;
-  gap: 10px;
+  gap: 0;
+  border-top: 1px solid #d4d9df;
+  border-bottom: 1px solid #d4d9df;
 }
 
 .stageLane {
-  border: 1px solid var(--line);
-  border-radius: 10px;
+  border-right: 1px solid #d4d9df;
   background: #fff;
   overflow: hidden;
 }
 
-.stageLaneName {
-  margin: 0;
-  background: var(--stage-head);
-  color: #fff;
-  padding: 7px 9px;
-  font-size: 0.83rem;
-  letter-spacing: 0.04em;
+.stageLane:last-child {
+  border-right: 0;
+}
+
+.stageLaneHead {
+  min-height: 88px;
+  padding: 8px 8px 0;
+  display: grid;
+  grid-template-rows: auto auto auto auto;
+  justify-items: center;
+  align-content: start;
+  background: #f3f5f8;
   cursor: grab;
   user-select: none;
   touch-action: none;
 }
 
-.stageLaneName:active {
+.stageLaneHead:active {
   cursor: grabbing;
+}
+
+.stageLaneDot {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 3px solid #8e96a1;
+  background: #fff;
+  margin-top: 2px;
+}
+
+.stageLaneNameWrap {
+  margin-top: 4px;
+  text-align: center;
+  min-height: 32px;
+}
+
+.stageLaneName {
+  margin: 0;
+  color: #202327;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+}
+
+.stageLaneSubtitle {
+  margin: 2px 0 0;
+  color: #606a76;
+  font-size: 0.65rem;
+  line-height: 1.1;
+}
+
+.stageLaneVenue {
+  margin: 3px 0 0;
+  color: #5a6471;
+  font-size: 0.62rem;
+  line-height: 1.1;
+  min-height: 14px;
+  text-align: center;
+}
+
+.stageLaneAccent {
+  width: calc(100% + 16px);
+  height: 5px;
+  margin: 6px -8px 0;
 }
 
 .stageLane.draggingStage {
@@ -301,33 +362,25 @@ textarea {
 
 .stageLaneBody {
   position: relative;
-  background:
-    linear-gradient(180deg, rgb(255 250 244 / 0.94), rgb(255 248 238 / 0.94)),
-    repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 26px,
-      rgb(217 205 185 / 0.25) 26px,
-      rgb(217 205 185 / 0.25) 27px
-    );
+  background: #ffffff;
 }
 
 .slot {
   position: absolute;
-  left: 6px;
-  right: 6px;
-  border: 2px solid #d3bda0;
-  border-radius: 8px;
-  background: linear-gradient(180deg, #fffdf9, #fff4e8);
-  padding: 3px 5px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+  left: 3px;
+  right: 3px;
+  border: 1px solid #d9dee6;
+  border-radius: 0;
+  background: #f3f5f8;
+  padding: 3px 5px 2px;
+  box-shadow: none;
   touch-action: none;
 }
 
 .slotTime {
-  font-size: 0.69rem;
+  font-size: 0.63rem;
   line-height: 1.15;
-  color: var(--muted);
+  color: #7a828e;
   margin-bottom: 1px;
 }
 
@@ -350,7 +403,7 @@ textarea {
   min-height: 14px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 4px;
   flex-wrap: nowrap;
   overflow: hidden;
@@ -406,7 +459,7 @@ textarea {
 
   .timelineShell {
     min-width: 720px;
-    grid-template-columns: 62px 1fr;
+    grid-template-columns: 50px 1fr 50px;
   }
 
   .board {
