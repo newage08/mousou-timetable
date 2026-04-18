@@ -1,10 +1,11 @@
 const STORAGE_KEY = "fesTimeBuilder_board_v8_mobile_timeedit_stageorder";
 const APP_NAME = "妄想タイムテーブル";
+const DISPLAY_YEAR = "2026";
 
 const state = {
   festivals: null,
   festivalKey: "summerSonic",
-  yearKey: "2025",
+  yearKey: "",
   dayFilter: "",
   pool: [],
   assignments: {},
@@ -24,6 +25,7 @@ const touchDrag = {
 const el = {
   festival: document.getElementById("festival"),
   year: document.getElementById("year"),
+  yearLabel: document.getElementById("year")?.closest("label"),
   dayFilter: document.getElementById("dayFilter"),
   quickAddForm: document.getElementById("quickAddForm"),
   quickAddInput: document.getElementById("quickAddInput"),
@@ -144,6 +146,24 @@ function toRgba(hex, alpha = 1) {
   return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})`;
 }
 
+function getSlotVisualColors(stageColor, hasArtist) {
+  if (hasArtist) {
+    return {
+      border: toRgba(stageColor, 0.72),
+      background: toRgba(stageColor, 0.88),
+      time: "#1f2328",
+      text: "#15181c"
+    };
+  }
+
+  return {
+    border: toRgba(stageColor, 0.5),
+    background: toRgba(stageColor, 0.2),
+    time: "#4b5563",
+    text: "#1f2328"
+  };
+}
+
 function isValidClock(text) {
   return /^([01]?\d|2[0-3]):([0-5]\d)$/.test(String(text || "").trim());
 }
@@ -175,12 +195,21 @@ function normalizeMinuteByAnchor(minute, anchor) {
   return minute < anchor ? minute + 1440 : minute;
 }
 
-function buildTimelineData(daySlots) {
+function getTimelineAnchorMinute(daySlots) {
+  const configured = getFestival().timelineStart;
+  if (isValidClock(configured)) {
+    return toMinutes(configured);
+  }
+
+  return Math.min(...daySlots.map((slot) => toMinutes(slot.start)));
+}
+
+function buildTimelineData(daySlots, anchorMinute = null) {
   if (daySlots.length === 0) {
     return { slots: [], minMinute: 600, maxMinute: 1320 };
   }
 
-  const anchor = Math.min(...daySlots.map((slot) => toMinutes(slot.start)));
+  const anchor = Number.isFinite(anchorMinute) ? anchorMinute : Math.min(...daySlots.map((slot) => toMinutes(slot.start)));
   const normalized = daySlots.map((slot) => {
     const startN = normalizeMinuteByAnchor(toMinutes(slot.start), anchor);
     let endN = normalizeMinuteByAnchor(toMinutes(slot.end), anchor);
@@ -266,10 +295,10 @@ function normalizeSlotOverrides() {
 
 function fillFestivalOptions() {
   el.festival.innerHTML = "";
-  Object.entries(state.festivals).forEach(([key, data]) => {
+  Object.entries(state.festivals).forEach(([key, data], idx) => {
     const option = document.createElement("option");
     option.value = key;
-    option.textContent = data.name;
+    option.textContent = data.uiLabel || `プラン ${idx + 1}`;
     el.festival.append(option);
   });
   el.festival.value = state.festivalKey;
@@ -278,14 +307,14 @@ function fillFestivalOptions() {
 function fillYearOptions() {
   const years = Object.keys(getFestival().years).sort((a, b) => Number(b) - Number(a));
   if (!years.includes(state.yearKey)) {
-    state.yearKey = years.includes("2025") ? "2025" : years[0];
+    state.yearKey = years[0];
   }
 
   el.year.innerHTML = "";
   years.forEach((year) => {
     const option = document.createElement("option");
     option.value = year;
-    option.textContent = `${year}版`;
+    option.textContent = `${DISPLAY_YEAR}妄想版`;
     el.year.append(option);
   });
   el.year.value = state.yearKey;
@@ -910,7 +939,7 @@ function getDaySlotsWithOverrides(day) {
 function renderBoard() {
   el.board.innerHTML = "";
   const daySlots = getDaySlotsWithOverrides(state.dayFilter);
-  const timeline = buildTimelineData(daySlots);
+  const timeline = buildTimelineData(daySlots, getTimelineAnchorMinute(daySlots));
   const spanMinutes = Math.max(60, timeline.maxMinute - timeline.minMinute);
   const pxPerMinute = window.innerWidth <= 640 ? 1.1 : 1.25;
   const bodyHeight = Math.ceil(spanMinutes * pxPerMinute);
@@ -921,7 +950,7 @@ function renderBoard() {
 
   const dayLabel = document.createElement("p");
   dayLabel.className = "dayBanner";
-  dayLabel.textContent = `${getFestival().name} ${state.yearKey} ${state.dayFilter}`;
+  dayLabel.textContent = `${DISPLAY_YEAR}妄想 ${state.dayFilter}`;
   el.board.append(dayLabel);
 
   const timelineShell = document.createElement("div");
@@ -1007,20 +1036,21 @@ function renderBoard() {
       const id = slot._slotId || slotId(slot);
       const assigned = state.assignments[id];
       const hasArtist = Boolean(assigned);
+      const colors = getSlotVisualColors(stageColor, hasArtist);
       const slotNode = document.createElement("div");
       slotNode.className = "slot";
       slotNode.dataset.slotId = id;
       slotNode.style.top = `${(slot._startN - timeline.minMinute) * pxPerMinute}px`;
       slotNode.style.height = `${Math.max(42, (slot._endN - slot._startN) * pxPerMinute)}px`;
-      slotNode.style.borderColor = hasArtist ? toRgba(stageColor, 0.72) : "#d9dee6";
-      slotNode.style.background = hasArtist ? toRgba(stageColor, 0.9) : "#f3f5f8";
+      slotNode.style.borderColor = colors.border;
+      slotNode.style.background = colors.background;
 
       const time = document.createElement("button");
       time.type = "button";
       time.className = "slotTime slotTimeButton";
       time.textContent = slot.start;
       time.title = "タップで時刻入力 / 枠を上下ドラッグで時刻移動";
-      time.style.color = hasArtist ? "#1c1f22" : "#7a828e";
+      time.style.color = colors.time;
       time.addEventListener("click", (event) => {
         event.stopPropagation();
         promptSlotTime(slot);
@@ -1053,7 +1083,7 @@ function renderSummary() {
   const total = getYearData().slots.length;
   const placed = Object.keys(state.assignments).length;
   el.summary.textContent = `配置 ${placed}/${total} ・ 未配置 ${state.pool.length}`;
-  el.boardTitle.textContent = `${APP_NAME} ${state.yearKey}`;
+  el.boardTitle.textContent = `${APP_NAME} ${DISPLAY_YEAR}`;
   updatePosterLink();
 }
 
@@ -1112,7 +1142,7 @@ function resetPlacement() {
 function switchFestival(key) {
   state.festivalKey = key;
   const years = Object.keys(getFestival().years).sort((a, b) => Number(b) - Number(a));
-  state.yearKey = years.includes("2025") ? "2025" : years[0];
+  state.yearKey = years[0];
   fillYearOptions();
   fillDayOptions();
   loadPresetCandidates({ rebuildPool: true, notice: true });
@@ -1210,7 +1240,7 @@ function exportBoardImage() {
       .map((slot) => getEffectiveSlot(slot)),
     yearData
   );
-  const timeline = buildTimelineData(daySlots);
+  const timeline = buildTimelineData(daySlots, getTimelineAnchorMinute(daySlots));
   const stages = getOrderedStages();
 
   const scale = 2;
@@ -1248,7 +1278,7 @@ function exportBoardImage() {
 
   ctx.fillStyle = "#16181a";
   ctx.font = "bold 18px 'Hiragino Sans', 'Yu Gothic', sans-serif";
-  ctx.fillText(`${getFestival().name} ${state.yearKey}`, leftPad, 16);
+  ctx.fillText(`${APP_NAME} ${DISPLAY_YEAR}`, leftPad, 16);
   ctx.font = "12px 'Hiragino Sans', 'Yu Gothic', sans-serif";
   ctx.fillStyle = "#444";
   ctx.fillText(state.dayFilter, leftPad, 34);
@@ -1314,20 +1344,21 @@ function exportBoardImage() {
       const sh = Math.max(28, (slot._endN - slot._startN) * pxPerMinute);
       const id = slot._slotId || slotId(slot);
       const artist = state.assignments[id]?.name || "";
+      const colors = getSlotVisualColors(stageColor, Boolean(artist));
 
-      ctx.fillStyle = artist ? toRgba(stageColor, 0.9) : "#f3f5f8";
-      ctx.strokeStyle = artist ? toRgba(stageColor, 1) : "#dfe4ea";
+      ctx.fillStyle = colors.background;
+      ctx.strokeStyle = colors.border;
       ctx.lineWidth = 1;
       ctx.fillRect(x + 2, sy, colWidth - 4, sh);
       ctx.strokeRect(x + 2, sy, colWidth - 4, sh);
 
-      ctx.fillStyle = artist ? "#0f1113" : "#8e96a1";
+      ctx.fillStyle = colors.time;
       ctx.font = "9px 'Hiragino Sans', 'Yu Gothic', sans-serif";
       ctx.textAlign = "left";
       ctx.fillText(slot.start, x + 7, sy + 11);
 
       if (artist) {
-        ctx.fillStyle = "#0f1113";
+        ctx.fillStyle = colors.text;
         ctx.font = "bold 12px 'Hiragino Sans', 'Yu Gothic', sans-serif";
         const maxW = colWidth - 14;
         const maxLines = sh >= 62 ? 3 : sh >= 44 ? 2 : 1;
@@ -1378,7 +1409,7 @@ function exportBoardImage() {
       return;
     }
 
-    const fileName = `fes_board_${state.festivalKey}_${state.yearKey}_${state.dayFilter.replace(/\s+/g, "_")}.png`;
+    const fileName = `fes_board_${DISPLAY_YEAR}_${state.dayFilter.replace(/\s+/g, "_")}.png`;
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -1419,6 +1450,9 @@ async function init() {
     fillDayOptions();
     if (!restored) {
       loadPresetCandidates({ rebuildPool: true, notice: false });
+    }
+    if (el.yearLabel) {
+      el.yearLabel.style.display = "none";
     }
     attachEvents();
     renderAll();

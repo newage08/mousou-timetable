@@ -1,13 +1,16 @@
 :root {
-  --bg0: #090d14;
-  --bg1: #0f1624;
-  --panel: #111b2b;
-  --panel-soft: #162236;
-  --ink: #e9eef8;
-  --muted: #91a0b7;
-  --line: #2a3953;
-  --accent: #59d2ff;
-  --danger: #ff6e8d;
+  --bg0: #f5f9ff;
+  --bg1: #ffffff;
+  --panel: #ffffff;
+  --panel-soft: #f3f7fc;
+  --ink: #162233;
+  --muted: #5c6f88;
+  --line: #d6e1ee;
+  --line-strong: #c3d2e5;
+  --accent: #0f6ad6;
+  --accent-soft: #dcecff;
+  --success: #0a8a5a;
+  --topbar-offset: 82px;
 }
 
 * { box-sizing: border-box; }
@@ -17,25 +20,25 @@ body {
   font-family: "Avenir Next", "Hiragino Sans", "Yu Gothic", sans-serif;
   color: var(--ink);
   background:
-    radial-gradient(1200px 560px at -10% -20%, rgb(64 150 255 / 0.35), transparent 58%),
-    radial-gradient(900px 420px at 120% -10%, rgb(69 255 208 / 0.25), transparent 58%),
-    linear-gradient(160deg, var(--bg0), var(--bg1) 58%, #0b1220 100%);
+    radial-gradient(1200px 560px at -15% -20%, rgb(77 148 255 / 0.16), transparent 62%),
+    radial-gradient(900px 420px at 115% -15%, rgb(255 190 106 / 0.14), transparent 60%),
+    linear-gradient(170deg, var(--bg0), var(--bg1) 62%, #f7fbff 100%);
   min-height: 100vh;
 }
 
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 30;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   padding: 12px 14px;
-  border-bottom: 1px solid #213149;
-  background: rgb(10 16 27 / 0.84);
-  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  background: rgb(255 255 255 / 0.88);
+  backdrop-filter: blur(12px);
 }
 
 .brand {
@@ -43,6 +46,7 @@ body {
   font-size: 1.1rem;
   letter-spacing: 0.04em;
   font-weight: 700;
+  color: #1b2c42;
 }
 
 .controls {
@@ -65,9 +69,9 @@ select,
 input,
 button {
   font: inherit;
-  border-radius: 10px;
-  border: 1px solid #334764;
-  background: #141f33;
+  border-radius: 11px;
+  border: 1px solid var(--line-strong);
+  background: #ffffff;
   color: var(--ink);
   padding: 8px 10px;
 }
@@ -76,14 +80,22 @@ select {
   min-height: 38px;
 }
 
+input::placeholder {
+  color: #8da0b8;
+}
+
 button {
   cursor: pointer;
-  background: linear-gradient(180deg, #284f87, #1f3e69);
-  border-color: #3e5f8f;
+  background: linear-gradient(180deg, #1f7be8, #0f62c8);
+  border-color: #2f78cb;
+  color: #fafdff;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
 }
 
 button:hover {
-  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 14px rgb(13 90 177 / 0.18);
+  filter: brightness(1.03);
 }
 
 .quickAddForm {
@@ -99,16 +111,17 @@ button:hover {
 .app {
   padding: 12px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
+  grid-template-columns: minmax(0, 1fr) 310px;
   gap: 10px;
+  align-items: start;
 }
 
 .boardPane,
 .poolPane {
   border: 1px solid var(--line);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgb(18 30 48 / 0.95), rgb(14 24 39 / 0.95));
-  box-shadow: 0 14px 34px rgb(0 0 0 / 0.35);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, #f9fcff 62%, #f4f8fd 100%);
+  box-shadow: 0 12px 32px rgb(58 96 148 / 0.1);
 }
 
 .boardPane {
@@ -131,6 +144,7 @@ button:hover {
   margin: 0;
   font-size: 0.92rem;
   letter-spacing: 0.04em;
+  color: #21324a;
 }
 
 .boardMeta {
@@ -149,9 +163,10 @@ button:hover {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  color: #9de8ff;
-  border: 1px solid #2f5f71;
+  color: #0f5fb8;
+  border: 1px solid #b8cfeb;
   border-radius: 999px;
+  background: #f4f9ff;
   font-size: 0.72rem;
   line-height: 1;
   padding: 6px 10px;
@@ -164,15 +179,15 @@ button:hover {
 
 .board {
   overflow: auto;
-  border: 1px solid #25354f;
+  border: 1px solid #d9e3ef;
   border-radius: 12px;
-  background: #0e1726;
+  background: linear-gradient(180deg, #fbfdff, #f7fbff);
   padding: 8px;
 }
 
 .dayBanner {
   margin: 0 0 7px;
-  color: #b4c0d5;
+  color: #6e7f97;
   font-size: 0.76rem;
   letter-spacing: 0.03em;
 }
@@ -186,13 +201,13 @@ button:hover {
 
 .timeAxis {
   position: relative;
-  border-right: 1px solid #24344d;
-  background: #111a2a;
+  border-right: 1px solid #d6e1ed;
+  background: #f2f7fd;
 }
 
 .timeAxis.isRight {
   border-right: 0;
-  border-left: 1px solid #24344d;
+  border-left: 1px solid #d6e1ed;
 }
 
 .timeTick {
@@ -200,7 +215,7 @@ button:hover {
   left: 4px;
   width: calc(100% - 8px);
   font-size: 0.67rem;
-  color: #7f90ab;
+  color: #72839d;
   line-height: 1;
 }
 
@@ -212,13 +227,13 @@ button:hover {
 .stageTimelineGrid {
   display: grid;
   gap: 0;
-  border-top: 1px solid #25354f;
-  border-bottom: 1px solid #25354f;
+  border-top: 1px solid #d6e1ed;
+  border-bottom: 1px solid #d6e1ed;
 }
 
 .stageLane {
-  border-right: 1px solid #25354f;
-  background: #0d1625;
+  border-right: 1px solid #d6e1ed;
+  background: #ffffff;
   overflow: hidden;
 }
 
@@ -233,7 +248,7 @@ button:hover {
   grid-template-rows: auto auto auto auto;
   justify-items: center;
   align-content: start;
-  background: #131f31;
+  background: linear-gradient(180deg, #f6faff, #edf4fd);
   cursor: grab;
   user-select: none;
   touch-action: none;
@@ -247,7 +262,7 @@ button:hover {
   width: 16px;
   height: 16px;
   border-radius: 999px;
-  border: 3px solid #8e96a1;
+  border: 3px solid #7d8897;
   background: #fff;
   margin-top: 1px;
 }
@@ -260,7 +275,7 @@ button:hover {
 
 .stageLaneName {
   margin: 0;
-  color: #ecf3ff;
+  color: #1f3149;
   font-size: 0.78rem;
   letter-spacing: 0.04em;
   line-height: 1.1;
@@ -268,14 +283,14 @@ button:hover {
 
 .stageLaneSubtitle {
   margin: 2px 0 0;
-  color: #90a2bd;
+  color: #5f7491;
   font-size: 0.63rem;
   line-height: 1.1;
 }
 
 .stageLaneVenue {
   margin: 3px 0 0;
-  color: #70839f;
+  color: #6b7d95;
   font-size: 0.61rem;
   line-height: 1.1;
   min-height: 14px;
@@ -301,14 +316,14 @@ button:hover {
 
 .stageLaneBody {
   position: relative;
-  background: #0f192a;
+  background: #fbfdff;
 }
 
 .hourGuide {
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1px solid rgb(129 153 188 / 0.22);
+  border-top: 1px solid rgb(128 151 184 / 0.24);
   pointer-events: none;
 }
 
@@ -316,15 +331,16 @@ button:hover {
   position: absolute;
   left: 3px;
   right: 3px;
-  border: 1px solid #2f405c;
-  border-radius: 6px;
-  background: #1a283e;
+  border: 1px solid #c7d4e6;
+  border-radius: 8px;
+  background: #edf3fb;
   padding: 4px 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   touch-action: none;
+  box-shadow: 0 4px 10px rgb(39 70 111 / 0.08);
 }
 
 .slotTime {
@@ -333,7 +349,7 @@ button:hover {
   left: 6px;
   font-size: 0.61rem;
   line-height: 1;
-  color: #8ea0bc;
+  color: #5f7087;
   margin: 0;
 }
 
@@ -360,9 +376,9 @@ button:hover {
 }
 
 .artistTag {
-  border: 1px solid #426289;
-  background: #15243a;
-  color: #d7e6ff;
+  border: 1px solid #aec2db;
+  background: #f5f9ff;
+  color: #1d2a3d;
   border-radius: 999px;
   padding: 5px 10px;
   font-size: 0.83rem;
@@ -376,7 +392,7 @@ button:hover {
   border-radius: 0;
   padding: 0;
   background: transparent;
-  color: #0f1113;
+  color: #11161c;
   width: 100%;
   text-align: center;
   font-size: 0.86rem;
@@ -392,12 +408,16 @@ button:hover {
   display: grid;
   grid-template-rows: 1fr auto;
   min-height: calc(100vh - 95px);
+  max-height: calc(100vh - var(--topbar-offset) - 10px);
   gap: 8px;
+  position: sticky;
+  top: var(--topbar-offset);
+  align-self: start;
 }
 
 .pool {
   min-height: 120px;
-  border: 1px dashed #345070;
+  border: 1px dashed #b9cade;
   border-radius: 10px;
   padding: 8px;
   display: flex;
@@ -405,11 +425,11 @@ button:hover {
   align-content: flex-start;
   gap: 6px;
   overflow: auto;
-  background: #0f1827;
+  background: #f7fbff;
 }
 
 .slotPlaceholder {
-  color: #6e819d;
+  color: #72839a;
   font-size: 0.74rem;
   display: block;
   width: 100%;
@@ -420,13 +440,13 @@ button:hover {
 .message {
   min-height: 1em;
   margin: 0;
-  color: #87f3cc;
+  color: var(--success);
   font-size: 0.72rem;
 }
 
 .slot.draggingTime {
   z-index: 9;
-  box-shadow: 0 10px 18px rgb(0 0 0 / 0.45);
+  box-shadow: 0 12px 24px rgb(32 64 104 / 0.25);
 }
 
 .touchGhost {
@@ -434,7 +454,7 @@ button:hover {
   z-index: 9999;
   pointer-events: none;
   opacity: 0.94;
-  box-shadow: 0 10px 24px rgb(0 0 0 / 0.45);
+  box-shadow: 0 12px 24px rgb(35 67 109 / 0.22);
 }
 
 @media (max-width: 1080px) {
@@ -446,6 +466,12 @@ button:hover {
   .boardPane,
   .poolPane {
     min-height: auto;
+  }
+
+  .poolPane {
+    top: 72px;
+    max-height: 42vh;
+    z-index: 20;
   }
 
   .timelineShell {
@@ -483,6 +509,23 @@ button:hover {
   select,
   #exportImageBtn {
     min-height: 40px;
+  }
+
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "pool"
+      "board";
+  }
+
+  .boardPane {
+    grid-area: board;
+  }
+
+  .poolPane {
+    grid-area: pool;
+    top: 66px;
+    max-height: 38vh;
   }
 
   .timelineShell {
