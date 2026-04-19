@@ -1,9 +1,6 @@
 {
   "summerSonic": {
     "name": "SUMMER SONIC TOKYO",
-    "timelineStartByDay": {
-      "Friday 15th August": "22:00"
-    },
     "years": {
       "2024": {
         "days": [
@@ -603,20 +600,36 @@
           "Mountain": {
             "Friday 15th August": [
               [
-                "22:00",
-                "22:50"
+                "10:20",
+                "10:50"
               ],
               [
-                "23:35",
-                "00:50"
+                "11:30",
+                "12:10"
               ],
               [
-                "01:35",
-                "02:50"
+                "12:40",
+                "13:20"
               ],
               [
-                "03:30",
-                "04:30"
+                "13:55",
+                "14:35"
+              ],
+              [
+                "15:10",
+                "16:00"
+              ],
+              [
+                "16:40",
+                "17:40"
+              ],
+              [
+                "18:20",
+                "19:20"
+              ],
+              [
+                "20:00",
+                "21:10"
               ]
             ],
             "Saturday 16th August": [
@@ -691,24 +704,52 @@
           "Sonic": {
             "Friday 15th August": [
               [
-                "22:15",
-                "23:15"
+                "10:00",
+                "10:30"
               ],
               [
-                "23:45",
-                "00:30"
+                "11:00",
+                "11:40"
               ],
               [
-                "01:00",
-                "01:45"
+                "12:10",
+                "12:50"
               ],
               [
-                "02:25",
-                "03:25"
+                "13:25",
+                "14:10"
               ],
               [
-                "03:55",
-                "04:40"
+                "14:50",
+                "15:35"
+              ],
+              [
+                "16:05",
+                "17:00"
+              ],
+              [
+                "17:35",
+                "18:35"
+              ],
+              [
+                "19:10",
+                "20:20"
+              ],
+              [
+                "23:30",
+                "00:50"
+              ],
+              [
+                "01:25",
+                "02:25"
+              ],
+              [
+                "02:50",
+                "03:30"
+              ],
+              [
+                "03:40",
+                "04:45"
               ]
             ],
             "Saturday 16th August": [
@@ -791,24 +832,52 @@
           "Pacific": {
             "Friday 15th August": [
               [
-                "22:45",
-                "23:25"
+                "10:00",
+                "10:20"
               ],
               [
-                "23:55",
-                "00:35"
+                "10:40",
+                "11:00"
               ],
               [
-                "01:05",
-                "01:45"
+                "11:45",
+                "12:25"
               ],
               [
-                "02:15",
-                "03:15"
+                "13:00",
+                "13:40"
               ],
               [
-                "03:45",
-                "04:35"
+                "14:10",
+                "14:50"
+              ],
+              [
+                "15:20",
+                "16:00"
+              ],
+              [
+                "16:30",
+                "17:10"
+              ],
+              [
+                "17:40",
+                "18:25"
+              ],
+              [
+                "19:00",
+                "20:00"
+              ],
+              [
+                "23:10",
+                "23:55"
+              ],
+              [
+                "00:40",
+                "01:25"
+              ],
+              [
+                "02:25",
+                "03:10"
               ]
             ],
             "Saturday 16th August": [
@@ -889,6 +958,40 @@
             ]
           },
           "Marine": {
+            "Friday 15th August": [
+              [
+                "11:00",
+                "11:35"
+              ],
+              [
+                "12:05",
+                "12:40"
+              ],
+              [
+                "13:10",
+                "13:50"
+              ],
+              [
+                "14:20",
+                "15:00"
+              ],
+              [
+                "15:30",
+                "16:10"
+              ],
+              [
+                "16:40",
+                "17:30"
+              ],
+              [
+                "18:05",
+                "19:05"
+              ],
+              [
+                "19:40",
+                "21:00"
+              ]
+            ],
             "Saturday 16th August": [
               [
                 "11:00",
@@ -951,6 +1054,36 @@
             ]
           },
           "Beach": {
+            "Friday 15th August": [
+              [
+                "11:10",
+                "11:40"
+              ],
+              [
+                "12:15",
+                "12:55"
+              ],
+              [
+                "13:35",
+                "14:15"
+              ],
+              [
+                "14:55",
+                "15:40"
+              ],
+              [
+                "16:20",
+                "17:20"
+              ],
+              [
+                "18:00",
+                "19:00"
+              ],
+              [
+                "19:40",
+                "21:00"
+              ]
+            ],
             "Saturday 16th August": [
               [
                 "13:55",
@@ -1013,6 +1146,44 @@
             ]
           },
           "Spotify Early Noise": {
+            "Friday 15th August": [
+              [
+                "10:00",
+                "10:20"
+              ],
+              [
+                "11:00",
+                "11:40"
+              ],
+              [
+                "12:10",
+                "12:50"
+              ],
+              [
+                "13:20",
+                "14:00"
+              ],
+              [
+                "14:35",
+                "15:15"
+              ],
+              [
+                "15:50",
+                "16:30"
+              ],
+              [
+                "17:15",
+                "18:05"
+              ],
+              [
+                "18:45",
+                "19:45"
+              ],
+              [
+                "21:10",
+                "21:40"
+              ]
+            ],
             "Saturday 16th August": [
               [
                 "11:15",
@@ -1214,7 +1385,175 @@
           "swetty",
           "Elle Teresa",
           "JP THE WAVY"
-        ]
+        ],
+        "presetArtistsByDay": {
+          "Friday 15th August": [
+            "The Struts",
+            "My First Story",
+            "[Alexandros]",
+            "WANIMA",
+            "YUKI",
+            "Weezer",
+            "The 1975",
+            "B'z",
+            "Regal Lily",
+            "BiSH",
+            "Grace Carter",
+            "Little Glee Monster",
+            "Bananarama",
+            "Sabrina Carpenter",
+            "Rita Ora",
+            "Fall Out Boy",
+            "Akiyama Kiiro",
+            "Creep Hyp",
+            "Alec Benjamin",
+            "Sam Fender",
+            "Pale Waves",
+            "The Birthday",
+            "Snow Patrol (ac.)",
+            "Two Door Cinema Club",
+            "MGMT",
+            "Sekai No Owari",
+            "NCT 127",
+            "R3HAB",
+            "UMEILO",
+            "SULLIVAN's FUN CLUB",
+            "神様、僕は気づいてしまった",
+            "ALLiSTER",
+            "PassCode",
+            "Psychedelic Porn Crumpets",
+            "KEYTALK",
+            "Michael Monroe",
+            "Loudness",
+            "amazarashi",
+            "Sukima Switch",
+            "TK from 凛として時雨",
+            "Intersection",
+            "Mukai Taichi",
+            "HY",
+            "Hata Motohiro",
+            "ENDRECHERI",
+            "JUJU",
+            "Robert Glasper",
+            "Yuki Hashimoto",
+            "Xiao Bing Chih",
+            "八三夭",
+            "Supper Moment",
+            "RIRI",
+            "m-flo",
+            "Bjorn Again",
+            "Cheryl Lynn",
+            "Drag Queens Show"
+          ],
+          "Saturday 16th August": [
+            "FALL OUT BOY",
+            "Official髭男dism",
+            "YUNGBLUD",
+            "CHASE ATLANTIC",
+            "i-dle",
+            "LiSA",
+            "SixTONES",
+            "THE PRODIGY",
+            "BABYMETAL",
+            "PORTER ROBINSON",
+            "HYDE",
+            "THE RAMPAGE",
+            "HOT MILK",
+            "chilldspot",
+            "黒夢",
+            "BEABADOOBEE",
+            "DOMi & JD BECK",
+            "BLOC PARTY",
+            "amazarashi",
+            "MONOBLOC",
+            "WALLICE",
+            "go!go!vanillas",
+            "紫 今",
+            "docka",
+            "THE ROSE",
+            "BAND-MAID",
+            "WOODZ",
+            "PSYCHIC FEVER",
+            "HANA",
+            "BUS",
+            "izna",
+            "Ave Mujica",
+            "KickFlip",
+            "JUJU",
+            "AI",
+            "COMMON",
+            "JIMMY JAM ＆ TERRY LEWIS",
+            "DIGABLE PLANETS",
+            "ウルフルズ",
+            "スチャダラパー",
+            "PUSHIM",
+            "Chilli Beans.",
+            "レトロリロン",
+            "ブランデー戦記",
+            "reina (w.a.u. Band Set) x TRIPPYHOUSING",
+            "CHO CO PA CO CHO CO QUIN QUIN",
+            "PAS TASTA",
+            "Lavt",
+            "OddRe:",
+            "水平線",
+            "CREATIVEMAN PRODUCTIONS"
+          ],
+          "Sunday 17th August": [
+            "ALICIA KEYS",
+            "aespa",
+            "CAMILA CABELLO",
+            "J BALVIN",
+            "BE:FIRST",
+            "JO1",
+            "Mrs. GREEN APPLE",
+            "優里",
+            "21 SAVAGE",
+            "JORJA SMITH",
+            "AI",
+            "TINASHE",
+            "KATSEYE",
+            "MAZZEL",
+            "INI",
+            "JVKE",
+            "INFINITY SONG",
+            "LANA",
+            "ELIJAH WOODS",
+            "SOMBR",
+            "NESSA BARRETT",
+            "FRUITS ZIPPER",
+            "冨岡愛",
+            "Bestted",
+            "NiziU",
+            "BMSG POSSE",
+            "LEE YOUNGJI",
+            "Da-iCE",
+            "JEFF SATUR",
+            "Omoinotake",
+            "Furui Riho",
+            "B&ZAI",
+            "FYURA",
+            "FEID",
+            "TAINY",
+            "BOMBA ESTÉREO",
+            "PERRO NEGRO",
+            "RIP SLYME",
+            "iri",
+            "Def Tech",
+            "Kaneee",
+            "Mega Shinnosuke",
+            "muque",
+            "AKASAKI",
+            "Billyrrom",
+            "ziproom",
+            "板歯目",
+            "DOG STOCK",
+            "Pastel Tang Club",
+            "JP THE WAVY",
+            "Elle Teresa",
+            "swetty",
+            "CREATIVEMAN PRODUCTIONS"
+          ]
+        }
       }
     },
     "sampleArtists": [
@@ -1392,7 +1731,7 @@
       "default": "https://www.summersonic.com/2025/en/tt/tokyo-day1/",
       "years": {
         "2025": {
-          "Friday 15th August": "https://www.summersonic.com/2025/en/tt/tokyo-day1/",
+          "Friday 15th August": "https://clashfinder.com/m/ss2019/",
           "Saturday 16th August": "https://www.summersonic.com/2025/en/tt/tokyo-day1/",
           "Sunday 17th August": "https://www.summersonic.com/2025/en/tt/tokyo-day2/"
         }
@@ -1890,7 +2229,104 @@
           "Jake Shimabukuro Band",
           "Robert Randolph",
           "Galactic"
-        ]
+        ],
+        "presetArtistsByDay": {
+          "Friday 25th July": [
+            "US",
+            "ROUTE 17 Rock’n’Roll ORCHESTRA",
+            "BRAHMAN",
+            "HYUKOH ＆ SUNSET ROLLERCOASTER",
+            "Vaundy",
+            "FRED AGAIN..",
+            "おとぼけビ〜バ〜",
+            "ECCA VANDAL",
+            "MDOU MOCTAR",
+            "MIYAVI",
+            "OK GO",
+            "Suchmos",
+            "kurayamisaka",
+            "TOMOO",
+            "MARCIN",
+            "青葉市子",
+            "PERFUME GENIUS",
+            "TYCHO",
+            "坂本慎太郎",
+            "Kiasmos",
+            "Joy (Anonymous)",
+            "HIROKO YAMAMURA",
+            "トリプルファイヤー",
+            "KIRINJI",
+            "ANSWER TO REMEMBER",
+            "PARLOR GREENS",
+            "MAYA DELILAH",
+            "EZRA COLLECTIVE"
+          ],
+          "Saturday 26th July": [
+            "CA7RIEL & PACO AMOROSO",
+            "君島大空 合奏形態",
+            "STUTS (Band Set)",
+            "JAMES BLAKE",
+            "山下 達郎",
+            "VULFPECK",
+            "FERMIN MUGURUZA",
+            "BALMING TIGER",
+            "FAYE WEBSTER",
+            "JJJ",
+            "BARRY CAN'T SWIM",
+            "FOUR TET",
+            "downy",
+            "jo0ji",
+            "離婚伝説",
+            "YHWH NAILGUN",
+            "NEWDAD",
+            "GINGER ROOT",
+            "サンボマスター",
+            "CONFIDENCE MAN",
+            "Night Tempo",
+            "JANE REMOVER",
+            "JYOTY",
+            "パソコン音楽クラブ",
+            "mei ehara",
+            "THE PANTURAS",
+            "踊ってばかりの国",
+            "THE SKA FLAMES",
+            "AFRICAN HEAD CHARGE",
+            "EGO-WRAPPIN’"
+          ],
+          "Sunday 27th July": [
+            "RED HOT CHILLI PIPERS",
+            "森山直太朗",
+            "Creepy Nuts",
+            "LITTLE SIMZ",
+            "RADWIMPS",
+            "VAMPIRE WEEKEND",
+            "1950’s Western Caravan Orchestra",
+            "MONO NO AWARE",
+            "Silica Gel",
+            "佐野元春 & THE COYOTE BAND",
+            "ROYEL OTIS",
+            "羊文学",
+            "HAIM",
+            "DYGL",
+            "T字路s",
+            "MEI SEMONES",
+            "まらしぃ",
+            "ENGLISH TEACHER",
+            "kanekoayano",
+            "THE HIVES",
+            "勢喜遊 & Yohji Igarashi",
+            "Ovall",
+            "Nujabes Metaphorical Ensemble",
+            "ATSUO THE PINEAPPLE DONKEY",
+            "FULLHOUSE",
+            "She Her Her Hers",
+            "吾妻光良 & The Swinging Boppers",
+            "GRACE BOWERS & THE HODGE PODGE",
+            "JAKE SHIMABUKURO BAND",
+            "ROBERT RANDOLPH",
+            "GALACTIC"
+          ]
+        }
       }
     },
     "sampleArtists": [
@@ -1970,7 +2406,14 @@
       }
     },
     "posterLinks": {
-      "default": "https://25.fujirockfestival.com/"
+      "default": "https://25.fujirockfestival.com/artist/timetable/25",
+      "years": {
+        "2025": {
+          "Friday 25th July": "https://25.fujirockfestival.com/artist/timetable/25",
+          "Saturday 26th July": "https://25.fujirockfestival.com/artist/timetable/26",
+          "Sunday 27th July": "https://25.fujirockfestival.com/artist/timetable/27"
+        }
+      }
     }
   }
 }

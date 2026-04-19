@@ -274,6 +274,38 @@ function createArtist(name) {
   return { id: `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`, name: String(name || "").trim() };
 }
 
+function getDayPresetArtists() {
+  const festival = getFestival();
+  const yearData = getYearData();
+  const dayMap = yearData.presetArtistsByDay || festival.presetArtistsByDay;
+  const dayArtists = dayMap?.[state.dayFilter];
+  if (Array.isArray(dayArtists) && dayArtists.length > 0) return dayArtists;
+
+  return Array.isArray(festival.presetArtists2026)
+    ? festival.presetArtists2026
+    : Array.isArray(festival.sampleArtists)
+      ? festival.sampleArtists
+      : Array.isArray(yearData.presetArtists)
+        ? yearData.presetArtists
+        : [];
+}
+
+function getAssignedNamesForCurrentDay() {
+  const daySlotIds = new Set(
+    getYearData().slots
+      .filter((slot) => slot.day === state.dayFilter)
+      .map((slot) => slotId(slot))
+  );
+
+  const names = new Set();
+  Object.entries(state.assignments).forEach(([key, artist]) => {
+    if (!daySlotIds.has(key)) return;
+    if (!artist?.name) return;
+    names.add(artist.name);
+  });
+  return names;
+}
+
 function setMessage(text) {
   el.message.textContent = text;
 }
@@ -365,13 +397,13 @@ function updatePosterLink() {
   if (!link) {
     el.posterLink.href = "#";
     el.posterLink.classList.add("isDisabled");
-    el.posterLink.textContent = "元ポスター未設定";
+    el.posterLink.textContent = "去年のタイムテーブル未設定";
     return;
   }
 
   el.posterLink.href = link;
   el.posterLink.classList.remove("isDisabled");
-  el.posterLink.textContent = "元ポスターを開く";
+  el.posterLink.textContent = "去年のタイムテーブルを開く";
 }
 
 function moveArtistToPool(payload) {
@@ -1110,25 +1142,21 @@ function buildPoolFromInput() {
 }
 
 function loadPresetCandidates(options = {}) {
-  const { rebuildPool = true, notice = true } = options;
-  const festival = getFestival();
-  const yearData = getYearData();
-  const presets = Array.isArray(festival.presetArtists2026)
-    ? festival.presetArtists2026
-    : Array.isArray(festival.sampleArtists)
-      ? festival.sampleArtists
-      : Array.isArray(yearData.presetArtists)
-        ? yearData.presetArtists
-        : [];
+  const { rebuildPool = true, notice = true, resetAssignments = false } = options;
+  const presets = getDayPresetArtists();
 
   if (rebuildPool) {
-    state.pool = presets.map((name) => createArtist(name));
-    state.assignments = {};
+    const assignedNames = getAssignedNamesForCurrentDay();
+    const poolNames = presets.filter((name) => !assignedNames.has(name));
+    state.pool = poolNames.map((name) => createArtist(name));
+    if (resetAssignments) {
+      state.assignments = {};
+    }
     renderAll();
   }
 
   if (notice) {
-    setMessage(`候補を読み込み: ${presets.length}件`);
+    setMessage(`候補を読み込み: ${state.pool.length}件`);
   }
 }
 
@@ -1158,13 +1186,13 @@ function switchFestival(key) {
   state.yearKey = years[0];
   fillYearOptions();
   fillDayOptions();
-  loadPresetCandidates({ rebuildPool: true, notice: true });
+  loadPresetCandidates({ rebuildPool: true, notice: true, resetAssignments: true });
 }
 
 function switchYear(key) {
   state.yearKey = key;
   fillDayOptions();
-  loadPresetCandidates({ rebuildPool: true, notice: true });
+  loadPresetCandidates({ rebuildPool: true, notice: true, resetAssignments: true });
 }
 
 function saveStateSilently() {
@@ -1424,7 +1452,7 @@ function attachEvents() {
   el.year.addEventListener("change", () => switchYear(el.year.value));
   el.dayFilter.addEventListener("change", () => {
     state.dayFilter = el.dayFilter.value;
-    renderAll();
+    loadPresetCandidates({ rebuildPool: true, notice: true, resetAssignments: false });
   });
 
   el.quickAddForm.addEventListener("submit", (event) => {
@@ -1449,7 +1477,7 @@ async function init() {
     }
     fillDayOptions();
     if (!restored) {
-      loadPresetCandidates({ rebuildPool: true, notice: false });
+      loadPresetCandidates({ rebuildPool: true, notice: false, resetAssignments: true });
     }
     if (el.yearLabel) {
       el.yearLabel.style.display = "none";
